@@ -172,8 +172,12 @@ class FrameTracker:
 
     def opt_pose_ray_dist_sim3(self, Xf, Xk, T_WCf, T_WCk, Qk, valid):
         last_error = 0
-        sqrt_info_ray = 1 / self.cfg["sigma_ray"] * valid * torch.sqrt(Qk)
-        sqrt_info_dist = 1 / self.cfg["sigma_dist"] * valid * torch.sqrt(Qk)
+        # sqrt_info_ray = 1 / self.cfg["sigma_ray"] * valid * torch.sqrt(Qk)
+        # sqrt_info_dist = 1 / self.cfg["sigma_dist"] * valid * torch.sqrt(Qk)
+
+        # make sqrt_info square to test paper formula
+        sqrt_info_ray = 1 / torch.pow(self.cfg["sigma_ray"]) * valid * Qk
+        sqrt_info_dist = 1 / torch.pow(self.cfg["sigma_dist"]) * valid * Qk
         sqrt_info = torch.cat((sqrt_info_ray.repeat(1, 3), sqrt_info_dist), dim=1)
 
         # Solving for relative pose without scale!
