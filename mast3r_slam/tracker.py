@@ -175,9 +175,8 @@ class FrameTracker:
         # sqrt_info_ray = 1 / self.cfg["sigma_ray"] * valid * torch.sqrt(Qk)
         # sqrt_info_dist = 1 / self.cfg["sigma_dist"] * valid * torch.sqrt(Qk)
 
-        # make sqrt_info square to test paper formula
-        sqrt_info_ray = 1 / torch.pow(self.cfg["sigma_ray"]) * valid * Qk
-        sqrt_info_dist = 1 / torch.pow(self.cfg["sigma_dist"]) * valid * Qk
+        sqrt_info_ray = (1 / (self.cfg["sigma_ray"] ** 2)) * valid * Qk
+        sqrt_info_dist = (1 / (self.cfg["sigma_dist"] ** 2)) * valid * Qk
         sqrt_info = torch.cat((sqrt_info_ray.repeat(1, 3), sqrt_info_dist), dim=1)
 
         # Solving for relative pose without scale!
@@ -221,9 +220,11 @@ class FrameTracker:
         self, Xf, Xk, T_WCf, T_WCk, Qk, valid, meas_k, valid_meas_k, K, img_size
     ):
         last_error = 0
-        sqrt_info_pixel = 1 / self.cfg["sigma_pixel"] * valid * torch.sqrt(Qk)
-        sqrt_info_depth = 1 / self.cfg["sigma_depth"] * valid * torch.sqrt(Qk)
-        sqrt_info = torch.cat((sqrt_info_pixel.repeat(1, 2), sqrt_info_depth), dim=1)
+        # sqrt_info_pixel = 1 / self.cfg["sigma_pixel"] * valid * torch.sqrt(Qk)
+        # sqrt_info_depth = 1 / self.cfg["sigma_depth"] * valid * torch.sqrt(Qk)
+
+        sqrt_info_pixel = (1 / (self.cfg["sigma_pixel"] ** 2)) * valid * Qk
+        sqrt_info_depth = (1 / (self.cfg["sigma_depth"] ** 2)) * valid * Qk
 
         # Solving for relative pose without scale!
         T_CkCf = T_WCk.inv() * T_WCf
