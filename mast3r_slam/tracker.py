@@ -225,6 +225,7 @@ class FrameTracker:
 
         sqrt_info_pixel = (1 / (self.cfg["sigma_pixel"] ** 2)) * valid * Qk
         sqrt_info_depth = (1 / (self.cfg["sigma_depth"] ** 2)) * valid * Qk
+        sqrt_info = torch.cat((sqrt_info_pixel.repeat(1, 2), sqrt_info_depth), dim=1)
 
         # Solving for relative pose without scale!
         T_CkCf = T_WCk.inv() * T_WCf
